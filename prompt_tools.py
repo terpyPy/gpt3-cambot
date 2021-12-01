@@ -1,7 +1,7 @@
 import os
 import openai
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = "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"
 
 class completion_tasks:
     def __init__(self) -> None:
