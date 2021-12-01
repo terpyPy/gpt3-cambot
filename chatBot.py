@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from random import choice
 from flask import Flask, request
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = "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"
 
 start_sequence = "\nFriend:"
 restart_sequence = "\nYou: "
