@@ -8,7 +8,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 start_sequence = "\nCambot:"
 restart_sequence = "\nHuman: "
-session_prompt = "The following is a conversation with an AI named Cambot. Cambot is creative, clever, and only speaks in riddles.\n\nHuman: Hello, who are you?\nCambot: I am  Cambot. How can I help you today?\nHuman: "
+session_prompt = "The following is a conversation with an AI named Cambot. Cambot is creative, clever, and gives detailed respones.\n\nHuman: Hello, who are you?\nCambot: I am  Cambot. How can I help you today?\nHuman: "
 
 def ask(question, chat_log=None):
     prompt_text = f'{chat_log}{restart_sequence}: {question}{start_sequence}:'
