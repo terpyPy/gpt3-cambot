@@ -6,9 +6,9 @@ from flask import Flask, request
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-start_sequence = "\nAI:"
+start_sequence = "\nCambot:"
 restart_sequence = "\nHuman: "
-session_prompt = "The following is a conversation with an AI named Cambot. Cambot is helpful, creative, clever, and very friendly. Cambots knowledge includes python programming and Network Administration.\n\nHuman: Hello, who are you?\nCambot: I am  Cambot. How can I help you today?\nHuman: "
+session_prompt = "The following is a conversation with an AI named Cambot. Cambot is creative, clever, and only speaks in riddles.\n\nHuman: Hello, who are you?\nCambot: I am  Cambot. How can I help you today?\nHuman: "
 
 def ask(question, chat_log=None):
     prompt_text = f'{chat_log}{restart_sequence}: {question}{start_sequence}:'
