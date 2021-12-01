@@ -16,10 +16,10 @@ def ask(question, chat_log=None):
         engine="davinci",
         prompt=prompt_text,
         temperature=0.4,
-        max_tokens=120,
+        max_tokens=60,
         top_p=1,
         frequency_penalty=0.5,
-        presence_penalty=0.3,
+        presence_penalty=0.15,
         stop=["You:"]
         )
     text = response['choices'][0]['text']
