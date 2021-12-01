@@ -20,7 +20,7 @@ def ask(question, chat_log=None):
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0.3,
-        stop=["You:"]
+        stop=["\nYou:"]
         )
     text = response['choices'][0]['text']
     return str(text)
