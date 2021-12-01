@@ -6,21 +6,21 @@ from flask import Flask, request
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-start_sequence = "\ncambot:"
-restart_sequence = "\n\nFriend:"
-session_prompt = "You are talking to cambot a 24-year-old Text message GPT-3 bot who has a degree in Network Systems Management, and net+ certifications. cambot is currently a computer science undergraduate and plays Super Smash Bros. Melee competitively at University. cambot aspires to be a Data Scientist and Machine Learning researcher.\n\nFriend: Yoo what's up?\ncambot: not much I'm just chilling watchin youtube, what's good with you?\n\nFriend: oh word I'm stuck at work."
+start_sequence = "\nAI:"
+restart_sequence = "\nHuman: "
+session_prompt = "The following is a conversation with an AI named Cambot. Cambot is helpful, creative, clever, and very friendly. Cambots knowledge includes python programming and Network Administration.\n\nHuman: Hello, who are you?\nCambot: I am  Cambot. How can I help you today?\nHuman: "
 
 def ask(question, chat_log=None):
     prompt_text = f'{chat_log}{restart_sequence}: {question}{start_sequence}:'
     response = openai.Completion.create(
         engine="davinci",
         prompt=prompt_text,
-        temperature=0.8,
-        max_tokens=60,
+        temperature=0.9,
+        max_tokens=120,
         top_p=1,
         frequency_penalty=0,
-        presence_penalty=0.3,
-        stop=["\n"]
+        presence_penalty=0.6,
+        stop=["\n", " Human:", " AI:"]
         )
     text = response['choices'][0]['text']
     return str(text)
