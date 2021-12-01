@@ -6,21 +6,21 @@ from flask import Flask, request
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-start_sequence = "\nFriend:"
-restart_sequence = "You: "
-session_prompt = "You: Yoo waz up?\nFriend: About to start my twitch stream.\nYou: Word, playing some games?\nFriend: Naw, probably just chatting and youtube videos tonight.\nYou: "
+start_sequence = "\nAI:"
+restart_sequence = "\nHuman: "
+session_prompt ="The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly.\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?\nHuman: "
 
 def ask(question, chat_log=None):
-    prompt_text = f'{chat_log}{restart_sequence}: {question}{start_sequence}:'
+    prompt_text = f'{chat_log}{restart_sequence}:{question}{start_sequence}:'
     response = openai.Completion.create(
-        engine="davinci",
-        prompt=prompt_text,
-        temperature=0.4,
-        max_tokens=60,
-        top_p=1,
-        frequency_penalty=0.5,
-        presence_penalty=0.15,
-        stop=["You:"]
+    engine="davinci",
+    prompt=prompt_text,
+    temperature=0.9,
+    max_tokens=64,
+    top_p=1,
+    frequency_penalty=0,
+    presence_penalty=0.6,
+    stop=["\n", " Human:", " AI:"]
         )
     text = response['choices'][0]['text']
     return str(text)
