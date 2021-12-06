@@ -26,7 +26,7 @@ class tools:
         scram = (allTheFuctions.ceaser(key,password ))
         scram = (allTheFuctions.encryptMessage(key, scram))
         logging.info('[hash]:--- ', scram, '\n')
-        return scram
+        return str(scram)
 
     def decryption(self, encryptPass):
         #

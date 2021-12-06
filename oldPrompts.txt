@@ -1,0 +1,3 @@
+self.explain_code = "\n\n\"\"\"\nHere's what the above function is doing:\n1.",
+self.write_a_paragraph = "Write a paper about, " + self.topic + ".\nIntroduction: inform the reader briefly about " + self.topic + ".\n\n" + self.prompt + "\n\nBody Paragraph: inform the reader about " + self.topic + " and it's limitations.\n\n"
+self.summarize = "A " + self.audience + " asked me what this information means:\n\"\"\"\n" + self.prompt + "\n\"\"\"\n\nI analogized it in language " + self.audience + " would use:\n\"\"\"\n"

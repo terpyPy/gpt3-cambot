@@ -1,31 +1,47 @@
 import os
 import openai
-from dotenv import load_dotenv
-from random import choice
-from flask import Flask, request
+from prompt_tools import promopts
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-start_sequence = "\nAI:"
-restart_sequence = "\nHuman: "
-session_prompt ="The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly.\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?\nHuman: "
+settings = promopts()
+qa = settings.Q_A_bot
+py_help = settings.Py_help_bot
 
-def ask(question, chat_log=None):
+tasks_dict = {'QA': qa,
+              'py': py_help}
+
+
+def ask(question, chat_log=None, prompt_type='QA'):
+    restart_sequence, start_sequence, engine_type, session_prompt,f_pen,p_pen = getSettings(prompt_type)
     prompt_text = f'{chat_log}{restart_sequence}:{question}{start_sequence}:'
     response = openai.Completion.create(
-    engine="davinci",
-    prompt=prompt_text,
-    temperature=0.9,
-    max_tokens=64,
-    top_p=1,
-    frequency_penalty=0,
-    presence_penalty=0.6,
-    stop=["\n", " Human:", " AI:"]
-        )
+        engine=engine_type,
+        prompt=prompt_text,
+        temperature=settings.temp,
+        max_tokens=64,
+        top_p=settings.temp,
+        frequency_penalty=f_pen,
+        presence_penalty=p_pen,
+        stop=["\n"]
+    )
     text = response['choices'][0]['text']
     return str(text)
 
-def append_interaction_to_chat_log(question, answer, chat_log=None):
-    if chat_log is None: 
-        chat_log = session_prompt 
-        return f'{chat_log}{restart_sequence} {question}{start_sequence}{answer}'
+
+def getSettings(type_p):
+
+    return (tasks_dict[type_p]['restart_sequence'],
+            tasks_dict[type_p]["start_sequence"],
+            tasks_dict[type_p]["engine"],
+            tasks_dict[type_p]["session_prompt"],
+            tasks_dict[type_p]['frequency_penalty'],
+            tasks_dict[type_p]['presence_penalty'])
+
+
+def append_interaction_to_chat_log(question, answer, chat_log=None, prompt_type='QA'):
+    restart_sequence, start_sequence, engine_type, session_prompt,f,p = getSettings(
+        prompt_type)
+    if chat_log is None:
+        chat_log = session_prompt
+    return f'{chat_log}{restart_sequence} {question}{start_sequence}{answer}'
