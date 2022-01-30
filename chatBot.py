@@ -7,9 +7,10 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 settings = promopts()
 qa = settings.Q_A_bot
 py_help = settings.Py_help_bot
-
+py_expl = settings.Py_explain
 tasks_dict = {'QA': qa,
-              'py': py_help}
+              'py': py_help,
+              'test': py_expl}
 
 
 def ask(question, chat_log=None, prompt_type='QA'):
@@ -19,7 +20,7 @@ def ask(question, chat_log=None, prompt_type='QA'):
         engine=engine_type,
         prompt=prompt_text,
         temperature=settings.temp,
-        max_tokens=64,
+        max_tokens=115,
         top_p=settings.temp,
         frequency_penalty=f_pen,
         presence_penalty=p_pen,

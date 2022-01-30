@@ -1,6 +1,6 @@
 import os
 import re
-class Logs:
+class Logs():
     def __init__(self) -> None:
         DB_get = self.read_whitelist()
         self.admin = DB_get[0]
@@ -44,6 +44,7 @@ class Logs:
             for line in ['admin='+self.admin+'\n', 'auth_users=' + ' '.join(self.auth_users)]:
                 f.write(line)
         self.DB_update()
+        
     def ban(self,user):
         self.auth_users.remove(str(user))
         with open('white_list.txt', 'w') as f:
