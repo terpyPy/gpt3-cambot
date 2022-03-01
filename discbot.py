@@ -6,26 +6,31 @@ from tokenGen.passtool import tools
 from logs import Logs
 import logsConsole
 import time
+from discord.ext import commands
+
 logs = Logs()
 startTime = time.time()
+hours = 0
 hasher = tools()
 client = discord.Client()
+cmd = logsConsole.console(logs)
 
 
-@client.event     
+@client.event
 async def on_ready():
     # let yourclient know when the bot is ready to be propmeted on startup
     print('Logged on as {0}!'.format(client.user))
-    client
-    
+    threading.Thread(target=cmd.main,
+                     args=(), daemon=True).start()
+
+
 @client.event
 async def on_message(message):
-    
     # prevent the bot from using or echoing commands it sends
     if message.author == client.user:
         return
-    #print(message.author, message.content)
-    
+
+
     if message.content.startswith('$'):
         # check the temp ban list stored in memory
         if not str(message.author) in logs.session['ban_list']:
@@ -34,22 +39,23 @@ async def on_message(message):
             if (str(message.author) in logs.auth_users):
                 await client.on_command_API(message)
                 await client.privileged_command(message)
-                print(logs.user_logs)
+                
             else:
                 await message.channel.send(
-                    'please ask ' + logs.admin +' to be whitelisted these questions cost money')
+                    'please ask ' + logs.admin + ' to be whitelisted these questions cost money')
         else:
             await message.channel.send(str(message.author) + ' is ban')
 
+
 @client.event
-async def on_command_anyone( message):
+async def on_command_anyone(message):
     if message.content.startswith('$he') or message.content.startswith('$?'):
         answer = ('usage:',
-                    '\n$QA [your question],',
-                    '\n$py [question about programing],',
-                    '\n$reset: this resets prompt and memory',
-                    '\n$fakehash: scramble a phrase',
-                    '\n$fakehash-d: decrypt the phrase')
+                  '\n$QA [your question],',
+                  '\n$py [question about programing],',
+                  '\n$reset: this resets prompt and memory',
+                  '\n$fakehash: scramble a phrase',
+                  '\n$fakehash-d: decrypt the phrase')
 
         print(message.author, 'on_command_whitelisted')
         await message.channel.send(' '.join(answer))
@@ -59,25 +65,29 @@ async def on_command_anyone( message):
         h = hasher.getToken(incoming_phrase)
         print(message.author, 'on_command_whitelisted')
         await message.channel.send(h)
-        # logs.user_logs[str(message.author)].append('on_command_whitelisted')
-
+       
     elif message.content.startswith('$fakehash-d '):
         incoming_phrase = message.content[11:]
         h = hasher.decryption(incoming_phrase)
         print(message.author, 'on_command_whitelisted')
         await message.channel.send(h)
-        # logs.user_logs[str(message.author)].append('on_command_whitelisted')
-    elif message.content.startswith('$ping'):
+        
 
+    elif message.content.startswith('$ping'):
         print(message.author, 'on_command_whitelisted')
         await message.channel.send(f"Pong! {round(client.latency * 1000)}ms")
 
+    elif message.content.startswith('$uptime'):
+        upTime = logs.uptime(startTime, hours)
+        await message.channel.send(upTime)
+
+
 @client.event
-async def on_command_API( message):
+async def on_command_API(message):
     # OpenAI bot commands, only whitelisted users can propmet the bot and reset the propmet history
-    commands = ('$QA', '$py', '$re','$ts')
+    commands = ('$QA', '$py', '$re', '$ts')
     if logs.session['API_access'] and len(logs.user_logs[str(message.author)]) < 6:
-        
+
         if message.content.startswith(commands[0]):
             answer = get_awnser(message, 'QA')
             await message.channel.send(answer)
@@ -89,7 +99,7 @@ async def on_command_API( message):
             await message.channel.send(answer)
             print(message.author, 'on_command_API')
             logs.user_logs[str(message.author)].append('on_command_API')
-            
+
         elif message.content.startswith(commands[3]):
             answer = get_awnser(message, 'test')
             await message.channel.send(answer)
@@ -105,18 +115,20 @@ async def on_command_API( message):
     elif not logs.session['API_access'] and str(message.content)[:3] in commands:
         await message.channel.send('api access is unavailable contact ' + logs.admin)
 
+
 @client.event
-async def privileged_command( message):
+async def privileged_command(message):
     # admin scope check & auto ban for attempted use,
     #
     # check the message for just the command
-    is_command = message.content.startswith('$GPT3 ')
-    
+    is_command = (message.content.startswith('$GPT3 ')
+                  or message.content.startswith('$beh- '))
+
     if (str(message.author) == logs.admin):
 
         if is_command:
             print(message.author, 'privileged_command')
-            
+
             # parse the message for just the command
             command = message.content[6:]
             print(command)
@@ -130,26 +142,27 @@ async def privileged_command( message):
         await message.channel.send(
             '@' + str(message.author) + ' you\'re attempt to use privilege commands has notified ' + logs.admin + '\nyour privileges and whitelist are revoked , and the attempt was logged')
 
+
 @client.event
-async def admin_options( command, message):
+async def admin_options(command, message):
     # admin privilege commands
     #
-    # GPT 3 api access control 
-    if command == 'on':
-        logs.session['API_access'] = True
-        await message.channel.send('GPT3 api access is online')
+    # GPT 3 api access control
+    truthTable = ('on' or 'off')
+    if command == truthTable:
+        status = logs.api_access(command)
+        await message.channel.send(status)
 
-    elif command == 'off':
-        logs.session['API_access'] = False
-        await message.channel.send('GPT3 api access is offline')
-
+    elif command == 'h':
+        await logs.hook(message)
+        
     # white list command
     elif '+' in command.split(sep=' '):
         user = command.split(sep=' ')[1]
         logs.white_list(user)
         await message.channel.send(str(user) + ' white-listed for GPT3 API')
 
-    # ban command 
+    # ban command
     elif '-' in command.split(sep=' '):
         user = command.split(sep=' ')[1]
         logs.session['ban_list'].append(str(user))
@@ -169,15 +182,13 @@ def get_awnser(message, command='QA'):
     answer = ask(incoming_msg, chat_log)
     # add both entry's to the chatlog
     logs.session['chat_log'] = append_interaction_to_chat_log(incoming_msg,
-                                                                answer,
-                                                                chat_log,
-                                                                command
-                                                                )
+                                                              answer,
+                                                              chat_log,
+                                                              command
+                                                              )
     # print(logs.session['chat_log'])
     return answer
 
+
 if __name__ == '__main__':
-    test =  threading.Thread(target=logsConsole.main, args=(logs.session,), daemon=True)
-    test.start()
-    
     client.run(logs.session['disc_auth'])

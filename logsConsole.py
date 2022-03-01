@@ -1,26 +1,26 @@
 
 class console:
-    def __init__(self,session) -> None:
+    def __init__(self,logs) -> None:
         super().__init__()
         # flag 0, is 0ff 1 is on
         self.flg = 1
-        self.session = session
+        self.logs = logs
     def Consolecmd(self):
         inpt = input('disc_console>')
         if inpt:
             if inpt[0] == '+':
-                self.white_list(inpt[2:])
+                self.logs.white_list(inpt[2:])
             elif inpt[0] == '-':
-                self.ban(inpt[2:])
+                self.logs.ban(inpt[2:])
             elif inpt.startswith("api"):
-                if inpt[4:] == 'on':
-                    self.session['API_access'] = True
-                if inpt[4:] == 'off':
-                    self.session['API_access'] = False
-                    
-            else:
-                print("invalid")
-def main(sessh):            
-    eh = console(sessh)
-    while True:
-        eh.Consolecmd()
+                cmd = inpt[4:]
+                if (cmd == 'on') or (cmd == 'off'):
+                    status = self.logs.api_access(cmd)
+                    print(status)
+        # self.logs.conMsg = 'changed from cmd'   
+    
+    
+    def main(self):            
+        while True:
+            self.Consolecmd()
+            
