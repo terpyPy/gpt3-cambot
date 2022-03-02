@@ -40,13 +40,9 @@ async def on_message(message):
 
                 respons = on_command_API(message, author)
 
-                if (author in cmd.auth_users):
+            elif (author in cmd.auth_users):
                     respons = privileged_command(message, author)
 
-                else:
-                    # else the user is not whitelisted
-                    respons = (
-                        'please ask ' + cmd.admin + ' to be whitelisted these questions cost money')
         else:
             respons = author + ' is ban'
 
