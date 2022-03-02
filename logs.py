@@ -1,6 +1,8 @@
 import os
 import re
 import time
+
+
 class Logs():
     def __init__(self, message=None):
         DB_get = self.read_whitelist()
@@ -13,8 +15,7 @@ class Logs():
                         'API_access': True,
                         'ban_list': ['']}
         self.user_logs = dict.fromkeys(self.auth_users,[None])
-        self.conMsg = 'DEFAULT'
-        
+         
     def uptime(self,startTime,hours):
         runtimeMin = (time.time() - startTime) // 60
         sec = (time.time() - startTime)
@@ -26,8 +27,10 @@ class Logs():
         H_M_S_time = ('Hours ' +str(hours)+ ' : ' + str(round(runtimeMin)) + ' : ' + str(round(sec)))
         return H_M_S_time
     
-    async def hook(self,message):
-        await message.channel.send(self.conMsg)
+    def hook(self,message):
+        self.msg = message
+        response = input("\nenter console msg:")
+        return response
         
     def api_access(self, command):
         apiMsg = 'GPT3 api access is %sline' %command
@@ -37,6 +40,7 @@ class Logs():
         elif command == 'off':
             self.session['API_access'] = False
             return apiMsg
+        
     def read_whitelist(self):
         # this function parses the whitlist to config out init variables
         white_list = open('white_list.txt')
