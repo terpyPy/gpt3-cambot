@@ -9,7 +9,7 @@ class Logs():
         self.admin = DB_get[0]
         self.msg = message
         self.auth_users = DB_get[1]
-
+        # api key required
         self.session = {'chat_log': None,
                         'disc_auth': os.getenv('DISC_BOT_KEY'),
                         'API_access': True,

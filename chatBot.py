@@ -2,6 +2,7 @@ import os
 import openai
 from prompt_tools import promopts
 
+# api key required
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 settings = promopts()
