@@ -1,11 +1,15 @@
+import time
+
+
 class console:
     def __init__(self,logs) -> None:
         # flag 0, is 0ff 1 is on
         self.flg = 1
         self.logs = logs
     def Consolecmd(self):
-        inpt = input('disc_console>')
         
+        inpt = input('disc_console>')
+    
         if inpt:
             
             if inpt[0] == '+':
@@ -41,7 +45,7 @@ class console:
                 else:
                     print(f'logs could not encrypt \nDBsec.isEncrypted: {currFlag}')
                     
-                   
+                
             elif inpt.startswith('decrypt'):
                 currFlag = self.logs.DBsec.isEncrypted
                 if currFlag:
@@ -50,7 +54,12 @@ class console:
                     return
                 else:
                     print(f'logs could not decrypt \nDBsec.isEncrypted: {currFlag}')
+        
+        self.flg = 0
     def main(self):            
         while True:
-            self.Consolecmd()
-            
+            if self.flg == 0:
+                self.flg = 1
+                self.Consolecmd()
+                
+           

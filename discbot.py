@@ -20,8 +20,10 @@ thread1 = threading.Thread(target=cmd.main,
 
 @client.event
 async def on_ready():
+    cmd.flg = 0
     # let yourclient know when the bot is ready to be propmeted on startup
     print('Logged on as {0}!'.format(client.user))
+    
 
 
 @client.event
@@ -33,19 +35,21 @@ async def on_message(message):
             return
 
         if message.content.startswith('$'):
+            cmd.flg = 0
             # check the temp ban list stored in memory
             if not str(message.author) in logs.session['ban_list']:
                 await client.on_command_anyone(message)
-                # if not ban and the command is whitelist scope check if user is whitelisted
-                if (str(message.author) in logs.auth_users):
-                    await client.on_command_API(message)
-                    await client.privileged_command(message)
-
-                else:
-                    await message.channel.send(
-                        'please ask ' + logs.admin + ' to be whitelisted these questions cost money')
             else:
                 await message.channel.send(str(message.author) + ' is ban')
+                # if not ban and the command is whitelist scope check if user is whitelisted
+            if (str(message.author) in logs.auth_users):
+                await client.on_command_API(message)
+                await client.privileged_command(message)
+            else:
+                await message.channel.send(
+                        'please ask ' + logs.admin + ' to be whitelisted these questions cost money')
+            
+
 
 
 @client.event
