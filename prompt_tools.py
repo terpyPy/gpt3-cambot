@@ -3,14 +3,14 @@ class promopts:
         engines = ["code-davinci-001", "davinci"]
         
         self.responsesLen = 100
-        self.temp = float(0.3)
+        self.temp = float(0.9)
         self.top_p = float(1.0)
         
         self.Q_A_bot = {
             "start_sequence": "\nA:",
             "restart_sequence": "\n\nQ:",
-            "session_prompt": "I am a highly intelligent question answering bot. If you ask me a question that is rooted in truth, I will give you the answer. If you ask me a question that is nonsense, trickery, or has no clear answer, I will respond with \"Unknown\".\n\nQ: What is human life expectancy in the United States?\nA: Human life expectancy in the United States is 78 years.\n\nQ: Who was president of the United States in 1955?\nA: Dwight D. Eisenhower was president of the United States in 1955.\n\nQ: Which party did he belong to?\nA: He belonged to the Republican Party.\n\nQ: What is the square root of banana?\nA: Unknown\n\nQ: How does a telescope work?\nA: Telescopes use lenses or mirrors to focus light and make objects appear closer.\n\nQ: Where were the 1992 Olympics held?\nA: The 1992 Olympics were held in Barcelona, Spain.\n\nQ: what is the mass of indole-3-butyric acid?\nA: the MW for indole-3-butyric acid is 203.2 g/mol.",
-            "engine": engines[1],
+            "session_prompt": "I am a highly intelligent question answering bot. This is a chatbot on a discord server. This bot like to talk about topics including Machine Learning, Cybersecurity, cannabis research, chemistry, and ethics.\n\nQ: what is the mass of indole-3-butyric acid?\nA: the MW for indole-3-butyric acid is 203.2 g/mol.",
+            "engine": "text-davinci-002",
             "frequency_penalty": float(0),
             "presence_penalty": float(0)
             }
@@ -19,7 +19,7 @@ class promopts:
             "start_sequence": "\nPython chatbot:",
             "restart_sequence": "\nYou: ",
             "session_prompt": "this is a Python coding assistant. Python chatbot is an AI who is a python expert. it will awnser questions about or write python code.\nYou: write list comprehesion\nPython chatbot: [None for i in range(N)].",
-            "engine": engines[0],
+            "engine": "text-davinci-002",
             "frequency_penalty": float(0.1),
             "presence_penalty": float(0)
             }
@@ -31,3 +31,25 @@ class promopts:
             "frequency_penalty": float(0),
             "presence_penalty": float(0.1)
             }
+        self.talkToBot = {
+            "start_sequence": "\nbot:",
+            "restart_sequence": "\ncomment:",
+            "session_prompt": "This is a chatbot on a discord server. This bot like to talk about topics including Machine Learning, Cybersecurity, cannabis research, chemistry, and ethics. This bot responds to Nonsense and explicate messages with \"Sorry I don't understand\".",
+            "engine": "text-davinci-002",
+            "frequency_penalty": float(0.45),
+            "presence_penalty": float(0.4)
+            }
+        self.promptArray = [self.Q_A_bot, self.Py_explain,self.Py_help_bot,self.talkToBot]
+    def createTopDict(self):
+        # Create top level dictionary with,Q_A_bot, py_help_bot, Py_explain and spreadsheet,
+        # as values in the top level dictionary called topDict.
+        topDict = {}
+        keyNameSpace = ['QA','py','test','talk']
+        for i in range(len(self.promptArray)):
+            topDict[keyNameSpace[i]] = self.promptArray[i]
+        return topDict
+
+if __name__ == '__main__':
+    d = promopts() 
+    t = d.createTopDict()
+    print(t)

@@ -6,26 +6,22 @@ from prompt_tools import promopts
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 settings = promopts()
-qa = settings.Q_A_bot
-py_help = settings.Py_help_bot
-py_expl = settings.Py_explain
-tasks_dict = {'QA': qa,
-              'py': py_help,
-              'test': py_expl}
+
+tasks_dict = settings.createTopDict()
 
 
-def ask(question, chat_log=None, prompt_type='QA'):
+def ask(question: str, chat_log=None, prompt_type='QA'):
     restart_sequence, start_sequence, engine_type, session_prompt,f_pen,p_pen = getSettings(prompt_type)
     prompt_text = f'{chat_log}{restart_sequence}:{question}{start_sequence}:'
     response = openai.Completion.create(
         engine=engine_type,
         prompt=prompt_text,
         temperature=settings.temp,
-        max_tokens=115,
+        max_tokens=settings.responsesLen,
         top_p=settings.temp,
         frequency_penalty=f_pen,
         presence_penalty=p_pen,
-        stop=["\n"]
+        stop=["#"]
     )
     text = response['choices'][0]['text']
     return str(text)

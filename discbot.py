@@ -1,36 +1,36 @@
 import threading
 import discord
-from discord.client import Client
+from discord.ext import commands
 from chatBot import append_interaction_to_chat_log, ask
 from tokenGen.passtool import tools
 from logs import Logs
 import logsConsole
 import time
+intents = discord.Intents.default()
 
 logs = Logs()
 startTime = time.time()
 hours = 0
 hasher = tools()
-client = discord.Client()
+client = commands.Bot(command_prefix='$', intents=intents.all())
 cmd = logsConsole.console(logs)
-thread1 =  threading.Thread(target=cmd.main,
-                     args=(), daemon=True)
+thread1 = threading.Thread(target=cmd.main,
+                           args=(), daemon=True)
+
 
 @client.event
 async def on_ready():
     # let yourclient know when the bot is ready to be propmeted on startup
     print('Logged on as {0}!'.format(client.user))
-   
 
 
 @client.event
 async def on_message(message):
     if not logs.cmdLockout:
-        
-    # prevent the bot from using or echoing commands it sends
+
+        # prevent the bot from using or echoing commands it sends
         if message.author == client.user:
             return
-
 
         if message.content.startswith('$'):
             # check the temp ban list stored in memory
@@ -40,7 +40,7 @@ async def on_message(message):
                 if (str(message.author) in logs.auth_users):
                     await client.on_command_API(message)
                     await client.privileged_command(message)
-                    
+
                 else:
                     await message.channel.send(
                         'please ask ' + logs.admin + ' to be whitelisted these questions cost money')
@@ -55,60 +55,60 @@ async def on_command_anyone(message):
                   '\n$QA [your question],',
                   '\n$py [question about programing],',
                   '\n$reset: this resets prompt and memory',
+                  '\n$ping: ping the server',
                   '\n$fakehash: scramble a phrase',
-                  '\n$fakehash-d: decrypt the phrase')
+                  '\n$fakehash-d: decrypt the phrase',
+                  '\n$streamerMode: fuck around and find out')
 
         print(message.author, 'on_command_whitelisted')
         await message.channel.send(' '.join(answer))
 
-    elif message.content.startswith('$fakehash '):
+
+    elif message.content.startswith('$hook'):
+        await logs.hook(message)
+
+    elif message.content.startswith('$fakehash'):
         incoming_phrase = message.content[9:]
         h = hasher.getToken(incoming_phrase)
         print(message.author, 'on_command_whitelisted')
         await message.channel.send(h)
-       
+
     elif message.content.startswith('$fakehash-d '):
         incoming_phrase = message.content[11:]
         h = hasher.decryption(incoming_phrase)
         print(message.author, 'on_command_whitelisted')
         await message.channel.send(h)
-        
 
     elif message.content.startswith('$ping'):
         print(message.author, 'on_command_whitelisted')
         await message.channel.send(f"Pong! {round(client.latency * 1000)}ms")
 
     elif message.content.startswith('$uptime'):
-        upTime = logs.uptime(startTime, hours)
+        upTime = logs.uptime(startTime)
         await message.channel.send(upTime)
+
 
 
 @client.event
 async def on_command_API(message):
     # OpenAI bot commands, only whitelisted users can propmet the bot and reset the propmet history
-    commands = ('$QA', '$py', '$re', '$ts')
+    commands = ('$QA', '$py', '$re')
     if logs.session['API_access']:
-
+        # OpenAI bot commands
+        # 0: q&a
+        # 1: py
+        # 2: reset
         if message.content.startswith(commands[0]):
             answer = get_awnser(message, 'QA')
             await message.channel.send(answer)
             print(message.author, 'on_command_API')
-            
 
         elif message.content.startswith(commands[1]):
             answer = get_awnser(message, 'py')
             await message.channel.send(answer)
             print(message.author, 'on_command_API')
-            
-
-        elif message.content.startswith(commands[3]):
-            answer = get_awnser(message, 'test')
-            await message.channel.send(answer)
-            print(message.author, 'on_command_API')
-            
 
         elif message.content.startswith(commands[2]):
-            logs.DB_update()
             await message.channel.send("conversation and respones cache cleared.")
             print(message.author, 'on_command_API')
 
@@ -121,8 +121,7 @@ async def privileged_command(message):
     # admin scope check & auto ban for attempted use,
     #
     # check the message for just the command
-    is_command = (message.content.startswith('$GPT3 ')
-                  or message.content.startswith('$cmd -'))
+    is_command = message.content.startswith('$GPT3 ')
 
     if (str(message.author) == logs.admin):
 
@@ -153,9 +152,6 @@ async def admin_options(command, message):
         status = logs.api_access(command)
         await message.channel.send(status)
 
-    elif command == 'h':
-        await logs.hook(message)
-        
     # white list command
     elif '+' in command.split(sep=' '):
         user = command.split(sep=' ')[1]
@@ -179,12 +175,12 @@ def get_awnser(message, command='QA'):
     # get chat log and then,
     chat_log = logs.session['chat_log']
     # ask question with incoming message and chat log
-    answer = ask(incoming_msg, chat_log)
+    answer = ask(incoming_msg, chat_log, prompt_type=command)
     # add both entry's to the chatlog
     logs.session['chat_log'] = append_interaction_to_chat_log(incoming_msg,
                                                               answer,
                                                               chat_log,
-                                                              command
+                                                              prompt_type=command
                                                               )
     # print(logs.session['chat_log'])
     return answer
