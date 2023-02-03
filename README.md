@@ -19,4 +19,13 @@ none whitelist commands:
  $ping
  $fakehash [phrase to encrypt]
  $fakehash-d [phrase to decrypt]
+
+console commands:
+ *uses from program console only, not disc*
+ - and +, add and remove a discord user by full username(#0000 required) to whitelist from console
+ api on, turn api commands on
+ api off, turn api commands off
+ api -ld, prevent both openAPI and local commands from being used by anyone including admins+
+ api -r remove the full locckdown on all commands
 ``
+
