@@ -66,7 +66,6 @@ class keyManger:
         encrypted_file.close()
         self.isEncrypted = True
         
-
     def decryptWhitelist(self):
         fernet = Fernet(self.fileKey)
         
@@ -84,6 +83,21 @@ class keyManger:
         dec_file.close()
         print('done decrypt')
         self.isEncrypted = False
+        
+    def read_encrypted_whitelist(self):
+        fernet = Fernet(self.fileKey)
+        with open('white_list.txt', 'rb') as enc_file:
+            encrypted = enc_file.read()
+        enc_file.close()
+        decrypted = fernet.decrypt(encrypted)
+        return decrypted.decode('utf-8')
+        
+    def write_encrypted_whitelist(self, data):
+        fernet = Fernet(self.fileKey)
+        encrypted = fernet.encrypt(data.encode('utf-8'))
+        with open('white_list.txt', 'wb') as enc_file:
+            enc_file.write(encrypted)
+        enc_file.close()
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
