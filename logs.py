@@ -42,19 +42,14 @@ class Logs():
             return apiMsg
 
     def white_list(self, user):
-        # self.DBsec.decryptWhitelist()
+        
         self.auth_users.append(str(user).strip())
         self.DBsec.write_encrypted_whitelist(
             f'admin={self.admin}\nauth_users=' + ' '.join(self.auth_users))
-        # self.DB_update()
-        # self.DBsec.encryptWhitelist()
         print(self.admin, self.auth_users)
 
     def ban(self, user):
-        # self.DBsec.decryptWhitelist()
         self.auth_users.remove(str(user).strip())
         self.DBsec.write_encrypted_whitelist(
             f'admin={self.admin}\nauth_users=' + ' '.join(self.auth_users))
-        # self.DB_update()
-        # self.DBsec.encryptWhitelist()
         print(self.admin, self.auth_users)

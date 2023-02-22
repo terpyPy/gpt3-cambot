@@ -1,6 +1,4 @@
-import time
-
-
+# back end to control the bot
 class console:
     def __init__(self,logs) -> None:
         # flag 0, is 0ff 1 is on

@@ -9,8 +9,8 @@ class promopts:
         self.Q_A_bot = {
             "start_sequence": "\nA:",
             "restart_sequence": "\n\nQ:",
-            "session_prompt": "I am a highly intelligent question answering bot. This is a chatbot on a discord server. This bot like to talk about topics including Machine Learning, Cybersecurity, cannabis research, chemistry, and ethics.\n\nQ: what is the mass of indole-3-butyric acid?\nA: the MW for indole-3-butyric acid is 203.2 g/mol.",
-            "engine": "text-davinci-002",
+            "session_prompt": "I am a highly intelligent question answering bot. This is a chatbot on a discord server. This bot like to talk about topics including Machine Learning, Cybersecurity, Data Science, and ethics.\n\nQ: ",
+            "engine": "text-davinci-003",
             "frequency_penalty": float(0),
             "presence_penalty": float(0)
             }

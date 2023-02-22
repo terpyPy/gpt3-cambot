@@ -7,8 +7,6 @@ from . import allTheFuctions
 import math
 import logging
 
-
-
 class tools:
     def __init__(self) -> None:
         self.keyDivisor = 91
