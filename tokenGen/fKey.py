@@ -7,6 +7,7 @@ from cryptography.fernet import Fernet
 import os
 from dotenv import load_dotenv, set_key
 import argparse
+import zlib
 
 load_dotenv('.env')
 
@@ -89,12 +90,18 @@ class keyManger:
         with open('white_list.txt', 'rb') as enc_file:
             encrypted = enc_file.read()
         enc_file.close()
+        # print the crc32 checksum of the encrypted file
+        print('crc32 checksum of encrypted file: ', zlib.crc32(encrypted))
+        set_key('.env', 'last_read_crc32', str(zlib.crc32(encrypted)))
         decrypted = fernet.decrypt(encrypted)
         return decrypted.decode('utf-8')
         
     def write_encrypted_whitelist(self, data):
         fernet = Fernet(self.fileKey)
         encrypted = fernet.encrypt(data.encode('utf-8'))
+        # print the crc32 checksum of the encrypted file
+        print('crc32 checksum of encrypted file: ', zlib.crc32(encrypted))
+        set_key('.env', 'last_write_crc32', str(zlib.crc32(encrypted)))
         with open('white_list.txt', 'wb') as enc_file:
             enc_file.write(encrypted)
         enc_file.close()

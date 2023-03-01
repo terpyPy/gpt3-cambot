@@ -5,7 +5,7 @@ class console:
         self.flg = 1
         self.logs = logs
     def Consolecmd(self):
-        
+        self.flg = 0
         inpt = input('disc_console>')
     
         if inpt:
@@ -53,7 +53,7 @@ class console:
                 else:
                     print(f'logs could not decrypt \nDBsec.isEncrypted: {currFlag}')
         
-        self.flg = 0
+        
     def main(self):            
         while True:
             if self.flg == 0:

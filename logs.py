@@ -1,8 +1,6 @@
 import os
-import re
 import time
 from tokenGen import fKey
-import discord
 
 DBsec = fKey.keyManger()
 if not DBsec.isEncrypted:
@@ -13,6 +11,8 @@ if not DBsec.isEncrypted:
 class Logs():
     def __init__(self, message=None):
         # decrypt the white_list, then encrypt the file again
+        self.API_CMDS = ('QA', 'py')
+        self.ADMIN_CMDS = ['on', 'off', '+', '-']
         self.msg = message
         self.DBsec = DBsec
         self.DB_get = self.DBsec.read_encrypted_whitelist().split(sep='\n')
